@@ -52,7 +52,8 @@ namespace ParticleEditor
         public ParticleEditorForm()
         {
             InitializeComponent();
-            mIsBackgroundMove = true;
+            //默认背景不移动
+            mIsBackgroundMove = false;
         }
 
         private void FormLoad(object sender, EventArgs e)
@@ -276,6 +277,42 @@ namespace ParticleEditor
         private void mPlayToolStripButton_Click(object sender, EventArgs e)
         {
             PropertyGridPropertyValueChanged(null, null);
+        }
+
+        private void ParticleEditorForm_DragDrop(object sender, DragEventArgs e)
+        {
+            String str = ((System.Array)e.Data.GetData(DataFormats.FileDrop)).GetValue(0).ToString();
+            String pStr = str;
+
+            int pos = str.LastIndexOf("\\");
+            str = str.Substring(pos + 1);
+            int pPos = str.LastIndexOf(".plist");
+            
+            //判断放进去的是plist文件还是png文件
+            if (pPos < 0)
+            {
+                mParticleSystem.TexturePath = str;
+            }
+            else
+            {
+                mParticleSystem = new ParticleSystem();
+                mFilePath = pStr;
+                mParticleSystem.Load(pStr);
+            }
+            
+            UpdateUI();
+        }
+
+        private void ParticleEditorForm_DragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                e.Effect = DragDropEffects.All;
+            }
+            else
+            {
+                e.Effect = DragDropEffects.None;
+            }
         }
     }
 }
