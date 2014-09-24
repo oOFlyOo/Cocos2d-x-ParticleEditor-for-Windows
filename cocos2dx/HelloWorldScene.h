@@ -16,7 +16,15 @@ public:
 	// a selector callback
 
 	// implement the "static node()" method manually
-	 CREATE_FUNC(HelloWorld);
+	CREATE_FUNC(HelloWorld);
+
+    virtual void onEnter();
+    virtual void onExit();
+
+    virtual bool ccTouchBegan(CCTouch* touch, CCEvent* event);
+    virtual void ccTouchMoved(CCTouch* touch, CCEvent* event);
+    virtual void ccTouchEnded(CCTouch* touch, CCEvent* event);
+    virtual void ccTouchCancelled(CCTouch* touch, CCEvent* event);
 
 	static void HelloWorld::ChangeParticle(float scale,bool isBackgroundMove,float angle,float angleVar,int destBlendFunc,int srcBlendFunc,float duration,float emissionRate,int emiiterMode,
 		GLbyte endColorR,GLbyte endColorG,GLbyte endColorB,GLbyte endColorA,
@@ -43,9 +51,15 @@ public:
 		unsigned int totalParticles
 		);
 
-	static CCParticleSystem* mEmiiter;
+	static CCParticleSystem *mEmiiter;
 	static CCSprite* mBackground;
 	static bool mIsBackgroundMove;
+
+private:
+    //移动发射器
+    void moveEmitter(CCTouch* touch);
+    //触摸次数
+    int m_touchNum;
 };
 
 #endif // __HELLOWORLD_SCENE_H__

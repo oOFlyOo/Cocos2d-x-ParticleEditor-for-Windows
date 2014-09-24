@@ -30,6 +30,9 @@ bool HelloWorld::init()
 		return false;
 	}
 
+    //初始化点击次数
+    m_touchNum = 0;
+
 	CCSize size= CCDirector::sharedDirector()->getWinSize();
 
 	mBackground=CCSprite::create("background.png");
@@ -57,6 +60,60 @@ bool HelloWorld::init()
 	mIsBackgroundMove=true;
 	return true;
 }
+
+
+void HelloWorld::onEnter()
+{
+    CCDirector* pDirector = CCDirector::sharedDirector();
+    pDirector->getTouchDispatcher()->addTargetedDelegate(this, 0, true);
+    CCLayer::onEnter();
+}
+
+
+void HelloWorld::onExit()
+{
+    CCDirector* pDirector = CCDirector::sharedDirector();
+    pDirector->getTouchDispatcher()->removeDelegate(this);
+    CCLayer::onExit();
+}    
+
+
+bool HelloWorld::ccTouchBegan(CCTouch* touch, CCEvent* event)
+{
+    //不允许使用多点触摸
+    if (m_touchNum > 0)
+    {
+        return false;
+    }
+
+    moveEmitter(touch);
+
+    //触摸次数 + 1
+    m_touchNum ++;
+    return true;
+}
+
+
+void HelloWorld::ccTouchMoved(CCTouch* touch, CCEvent* event)
+{
+    moveEmitter(touch);
+}
+
+
+void HelloWorld::ccTouchEnded(CCTouch* touch, CCEvent* event)
+{
+    moveEmitter(touch);
+
+    //触摸次数 - 1
+    m_touchNum --;
+} 
+
+
+void HelloWorld::ccTouchCancelled(CCTouch* touch, CCEvent* event)
+{
+    ccTouchEnded(touch, event);
+} 
+
 
 void HelloWorld::ChangeParticle(float scale,bool isBackgroundMove,float angle,float angleVar,int destBlendFunc,int srcBlendFunc,float duration,float emissionRate,int emiiterMode,
 	GLbyte endColorR,GLbyte endColorG,GLbyte endColorB,GLbyte endColorA,
@@ -190,7 +247,6 @@ void HelloWorld::ChangeParticle(float scale,bool isBackgroundMove,float angle,fl
 	mEmiiter->setAngle(angle);
 	mEmiiter->setAngleVar(angleVar);
 
-
 	ccBlendFunc func;
 	func.dst=destBlendFunc;
 	func.src=srcBlendFunc;
@@ -231,8 +287,6 @@ void HelloWorld::ChangeParticle(float scale,bool isBackgroundMove,float angle,fl
 		mEmiiter->setRotatePerSecondVar(rotatePerSecondVar);
 	}
 
-
-
 	mEmiiter->setEndSize(endSize);
 	mEmiiter->setEndSizeVar(endSizeVar);
 
@@ -263,8 +317,17 @@ void HelloWorld::ChangeParticle(float scale,bool isBackgroundMove,float angle,fl
 	mEmiiter->resetSystem();
 }
 
+
+void HelloWorld::moveEmitter(CCTouch* touch)
+{
+    CCPoint pos = touch->getLocation();
+    pos = mBackground->convertToNodeSpace(pos);
+    mEmiiter->setPosition(pos);
+}
+
+
 bool HelloWorld::mIsBackgroundMove;
 
 CCSprite* HelloWorld::mBackground;
 
-CCParticleSystem* HelloWorld::mEmiiter;
+CCParticleSystem *HelloWorld::mEmiiter;
