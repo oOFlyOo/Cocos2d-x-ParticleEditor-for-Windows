@@ -295,6 +295,9 @@ namespace ParticleEditor
                     WriteFloat(writer, "rotatePerSecond", RotatePerSecond);
                     WriteFloat(writer, "rotatePerSecondVariance", RotatePerSecondVar);
 
+                    // 添加移动模式的写入
+                    WriteFloat(writer, "positionType", (float)PositionType);
+
                     WriteFloat(writer, "sourcePositionVariancex", PosVarX);
                     WriteFloat(writer, "sourcePositionVariancey", PosVarY);
 
@@ -400,7 +403,6 @@ namespace ParticleEditor
                     EndSpin = ReadFloat(dict, "rotationEnd");
                     EndSpinVar = ReadFloat(dict, "rotationEndVariance");
 
-
                     EndSize = ReadFloat(dict, "finishParticleSize");
                     EndSizeVar = ReadFloat(dict, "finishParticleSizeVariance");
 
@@ -421,6 +423,8 @@ namespace ParticleEditor
                     RadialAccel = ReadFloat(dict, "radialAcceleration");
                     RotatePerSecond = ReadFloat(dict, "rotatePerSecond");
                     RotatePerSecondVar = ReadFloat(dict, "rotatePerSecondVariance");
+
+                    PositionType = (PositionType)(int)ReadFloat(dict, "positionType");
 
                     PosVarX = ReadFloat(dict, "sourcePositionVariancex");
                     PosVarY = ReadFloat(dict, "sourcePositionVariancey");
@@ -463,8 +467,7 @@ namespace ParticleEditor
 
                 FileInfo info=new FileInfo(filePath);
                 PlistPath = info.DirectoryName;
-               
-
+                
                 fileStream.Close();
             }
         }
